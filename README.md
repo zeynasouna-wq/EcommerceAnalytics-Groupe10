@@ -1,6 +1,6 @@
 # EcommerceAnalytics
 
-Système d'analyse de données e-commerce distribué — Projet final Spark & Scala (Groupe 3).
+Système d'analyse de données e-commerce distribué — Projet final Spark & Scala (Groupe 10).
 
 Pipeline Spark en Scala qui ingère des données transactionnelles multi-format
 (CSV, JSON, Parquet), les valide, les enrichit, puis produit des indicateurs
