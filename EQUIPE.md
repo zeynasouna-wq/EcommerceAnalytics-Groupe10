@@ -4,7 +4,7 @@
 
 | Nom | Prénom | E-mail | `git config user.name` |
 |---|---|---|---|
-| TODO | TODO | TODO@... | TODO |
+| DIOP | Seynabou Souna | zeynasouna@gmail.com | Seynabou Souna DIOP |
 | TODO | TODO | TODO@... | TODO |
 | TODO | TODO | TODO@... | TODO |
 
