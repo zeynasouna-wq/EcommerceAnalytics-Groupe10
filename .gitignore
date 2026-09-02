@@ -14,3 +14,7 @@ project/project/
 
 # Sorties du pipeline (à ajuster si vous voulez versionner un échantillon)
 output/
+
+.metals/
+
+.metals/
