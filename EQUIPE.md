@@ -1,4 +1,4 @@
-# Équipe — Groupe 3
+# Équipe — Groupe 10
 
 ## Membres
 
