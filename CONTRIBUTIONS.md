@@ -1,34 +1,34 @@
-# Journal de contribution — Groupe 3
+# Journal de contribution — Groupe 10
 
 ## Tableau récapitulatif : question → responsable → relecteur
 
 | Partie / Question | Responsable | Relecteur | Statut |
 |---|---|---|---|
-| 0.1 — Constitution du groupe | Collectif | — |  À finaliser (noms/e-mails) |
-| 0.2 — Suivi Git | Collectif | — |  Dépôt Git à initialiser |
-| 0.3 — Journal de contribution | Collectif | — |  En cours (ce fichier) |
-| 1.1 — Structure SBT | Membre A | Membre C |  Fait |
-| 1.2 — build.sbt | Membre A | Membre C |  Fait |
-| 1.3 — README.md | Membre A | Membre C |  Fait |
-| 2.1 — Ingestion multi-format | Membre A | Membre B |  Fait |
-| 2.2 — Validation des données | Membre A | Membre B |  Fait |
-| 2.3 — Gestion d'erreurs et résumé | Membre A | Membre B |  Fait |
-| 2.4 — Rapport de qualité des données | Membre A | Membre B |  Fait |
-| 2.5 — Intégrité référentielle (bonus) | Membre A | Membre B |  Fait |
-| 3.1 — UDF extractTimeFeatures | Membre B | Membre A |  À faire |
-| 3.2 — enrichTransactionData | Membre B | Membre A |  À faire |
+| 0.1 — Constitution du groupe | Collectif | — | Partiel - Membre A renseignée, B et C à ajouter |
+| 0.2 — Suivi Git | Collectif | — | Fait - Dépôt Git local + GitHub créés |
+| 0.3 — Journal de contribution | Collectif | — | En cours (ce fichier) |
+| 1.1 — Structure SBT | Membre A | Membre C | Fait |
+| 1.2 — build.sbt | Membre A | Membre C | Fait |
+| 1.3 — README.md | Membre A | Membre C | Fait |
+| 2.1 — Ingestion multi-format | Membre A | Membre B | Fait |
+| 2.2 — Validation des données | Membre A | Membre B | Fait |
+| 2.3 — Gestion d'erreurs et résumé | Membre A | Membre B | Fait |
+| 2.4 — Rapport de qualité des données | Membre A | Membre B | Fait |
+| 2.5 — Intégrité référentielle (bonus) | Membre A | Membre B | Fait |
+| 3.1 — UDF extractTimeFeatures | Membre B | Membre A | À faire |
+| 3.2 — enrichTransactionData | Membre B | Membre A | À faire |
 | 3.3 — Analyse par partition Window | Membre B | Membre A | À faire |
-| 3.4 — Transactions suspectes (bonus) | Membre B | Membre A |  À faire |
-| 4.1 — Rapport détaillé par marchand | Membre C | Membre B |  À faire |
-| 4.2 — Analyse de cohortes | Membre C | Membre B |  À faire |
-| 4.3 — Segmentation RFM (bonus) | Membre C | Membre B |  À faire |
-| 4.4 — Analyse produits et catégories (bonus) | Membre C | Membre B |  À faire |
-| 5.1 — Optimisation du stockage | Membre C | Membres A et B |  À faire |
-| 5.2 — Optimisation des jointures | Membre C | Membres A et B |  À faire |
-| 5.3 — Mesure du gain (bonus) | Membre C | Membres A et B |  À faire |
-| 6.1 — EcommerceAnalyticsApp | Membre C | Les 3 membres |  À faire |
-| 6.2 — Exécution modulaire (bonus) | Membre C | Les 3 membres |  À faire |
-| 7.1 — application.conf | Membre A | Membre C |  Fait |
+| 3.4 — Transactions suspectes (bonus) | Membre B | Membre A | À faire |
+| 4.1 — Rapport détaillé par marchand | Membre C | Membre B | À faire |
+| 4.2 — Analyse de cohortes | Membre C | Membre B | À faire |
+| 4.3 — Segmentation RFM (bonus) | Membre C | Membre B | À faire |
+| 4.4 — Analyse produits et catégories (bonus) | Membre C | Membre B | À faire |
+| 5.1 — Optimisation du stockage | Membre C | Membres A et B | À faire |
+| 5.2 — Optimisation des jointures | Membre C | Membres A et B | À faire |
+| 5.3 — Mesure du gain (bonus) | Membre C | Membres A et B | À faire |
+| 6.1 — EcommerceAnalyticsApp | Membre C | Les 3 membres | À faire |
+| 6.2 — Exécution modulaire (bonus) | Membre C | Les 3 membres | À faire |
+| 7.1 — application.conf | Membre A | Membre C | Fait |
 
 ## Charge de travail estimée par membre
 
@@ -36,7 +36,7 @@
 
 | Membre | Heures estimées | Difficultés rencontrées |
 |---|---|---|
-| Membre A | TODO | TODO |
+| Membre A (Seynabou Souna DIOP) | ~5-6h (< 2h de développement initial + ~4h de débogage environnement, vérification, correction et mise en place Git/GitHub) | Mise en place de l'environnement local sous Windows plus longue que prévu : version de Java trop récente incompatible avec Spark (passage à Java 17), absence de `winutils.exe`/`hadoop.dll` nécessaires à Hadoop sous Windows, erreurs d'accès mémoire liées au système de modules de Java 17 (flags `--add-opens` à ajouter), et un décalage de type entre le JSON inféré par Spark et la case class `User` (`age` en BIGINT vs Int). |
 | Membre B | TODO | TODO |
 | Membre C | TODO | TODO |
 
