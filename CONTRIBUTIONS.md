@@ -4,31 +4,31 @@
 
 | Partie / Question | Responsable | Relecteur | Statut |
 |---|---|---|---|
-| 0.1 — Constitution du groupe | Collectif | — | ⬜ À finaliser (noms/e-mails) |
-| 0.2 — Suivi Git | Collectif | — | ⬜ Dépôt Git à initialiser |
-| 0.3 — Journal de contribution | Collectif | — | 🟡 En cours (ce fichier) |
-| 1.1 — Structure SBT | Membre A | Membre C | ✅ Fait |
-| 1.2 — build.sbt | Membre A | Membre C | ✅ Fait |
-| 1.3 — README.md | Membre A | Membre C | ✅ Fait |
-| 2.1 — Ingestion multi-format | Membre A | Membre B | ✅ Fait |
-| 2.2 — Validation des données | Membre A | Membre B | ✅ Fait |
-| 2.3 — Gestion d'erreurs et résumé | Membre A | Membre B | ✅ Fait |
-| 2.4 — Rapport de qualité des données | Membre A | Membre B | ✅ Fait |
-| 2.5 — Intégrité référentielle (bonus) | Membre A | Membre B | ✅ Fait |
-| 3.1 — UDF extractTimeFeatures | Membre B | Membre A | ⬜ À faire |
-| 3.2 — enrichTransactionData | Membre B | Membre A | ⬜ À faire |
-| 3.3 — Analyse par partition Window | Membre B | Membre A | ⬜ À faire |
-| 3.4 — Transactions suspectes (bonus) | Membre B | Membre A | ⬜ À faire |
-| 4.1 — Rapport détaillé par marchand | Membre C | Membre B | ⬜ À faire |
-| 4.2 — Analyse de cohortes | Membre C | Membre B | ⬜ À faire |
-| 4.3 — Segmentation RFM (bonus) | Membre C | Membre B | ⬜ À faire |
-| 4.4 — Analyse produits et catégories (bonus) | Membre C | Membre B | ⬜ À faire |
-| 5.1 — Optimisation du stockage | Membre C | Membres A et B | ⬜ À faire |
-| 5.2 — Optimisation des jointures | Membre C | Membres A et B | ⬜ À faire |
-| 5.3 — Mesure du gain (bonus) | Membre C | Membres A et B | ⬜ À faire |
-| 6.1 — EcommerceAnalyticsApp | Membre C | Les 3 membres | ⬜ À faire |
-| 6.2 — Exécution modulaire (bonus) | Membre C | Les 3 membres | ⬜ À faire |
-| 7.1 — application.conf | Membre A | Membre C | ✅ Fait |
+| 0.1 — Constitution du groupe | Collectif | — |  À finaliser (noms/e-mails) |
+| 0.2 — Suivi Git | Collectif | — |  Dépôt Git à initialiser |
+| 0.3 — Journal de contribution | Collectif | — |  En cours (ce fichier) |
+| 1.1 — Structure SBT | Membre A | Membre C |  Fait |
+| 1.2 — build.sbt | Membre A | Membre C |  Fait |
+| 1.3 — README.md | Membre A | Membre C |  Fait |
+| 2.1 — Ingestion multi-format | Membre A | Membre B |  Fait |
+| 2.2 — Validation des données | Membre A | Membre B |  Fait |
+| 2.3 — Gestion d'erreurs et résumé | Membre A | Membre B |  Fait |
+| 2.4 — Rapport de qualité des données | Membre A | Membre B |  Fait |
+| 2.5 — Intégrité référentielle (bonus) | Membre A | Membre B |  Fait |
+| 3.1 — UDF extractTimeFeatures | Membre B | Membre A |  À faire |
+| 3.2 — enrichTransactionData | Membre B | Membre A |  À faire |
+| 3.3 — Analyse par partition Window | Membre B | Membre A | À faire |
+| 3.4 — Transactions suspectes (bonus) | Membre B | Membre A |  À faire |
+| 4.1 — Rapport détaillé par marchand | Membre C | Membre B |  À faire |
+| 4.2 — Analyse de cohortes | Membre C | Membre B |  À faire |
+| 4.3 — Segmentation RFM (bonus) | Membre C | Membre B |  À faire |
+| 4.4 — Analyse produits et catégories (bonus) | Membre C | Membre B |  À faire |
+| 5.1 — Optimisation du stockage | Membre C | Membres A et B |  À faire |
+| 5.2 — Optimisation des jointures | Membre C | Membres A et B |  À faire |
+| 5.3 — Mesure du gain (bonus) | Membre C | Membres A et B |  À faire |
+| 6.1 — EcommerceAnalyticsApp | Membre C | Les 3 membres |  À faire |
+| 6.2 — Exécution modulaire (bonus) | Membre C | Les 3 membres |  À faire |
+| 7.1 — application.conf | Membre A | Membre C |  Fait |
 
 ## Charge de travail estimée par membre
 
