@@ -210,5 +210,5 @@ Gain (%) = ((Temps sans optimisation - Temps avec optimisation)
             / Temps sans optimisation) × 100
 ```
 
-Le temps total mesuré passe de **12,896 secondes** sans optimisation à
-**6,446 secondes** avec optimisation, soit un gain global de **50,02 %**.
+Le temps total mesuré passe de **13,729 secondes** sans optimisation à
+**6,281 secondes** avec optimisation, soit un gain global de **54,25 %**.
