@@ -72,3 +72,11 @@ Compile / run := Defaults.runTask(Compile / fullClasspath, Compile / run / mainC
 // Spark) du classpath d'exécution locale, et on obtient NoClassDefFoundError
 // même si le code compile parfaitement.
 Compile / runMain := Defaults.runMainTask(Compile / fullClasspath, Compile / run / runner).evaluated
+
+
+// Configuration de l'encodage UTF-8 pour éviter les problèmes d'affichage des caractères accentués
+Compile / scalacOptions ++= Seq("-encoding", "UTF-8")
+Compile / javacOptions ++= Seq("-encoding", "UTF-8")
+
+javaOptions ++= Seq(
+  "-Dfile.encoding=UTF-8")
