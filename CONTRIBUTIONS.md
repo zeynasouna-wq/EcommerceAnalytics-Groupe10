@@ -15,10 +15,10 @@
 | 2.3 — Gestion d'erreurs et résumé | Membre A | Membre B | Fait |
 | 2.4 — Rapport de qualité des données | Membre A | Membre B | Fait |
 | 2.5 — Intégrité référentielle (bonus) | Membre A | Membre B | Fait |
-| 3.1 — UDF extractTimeFeatures | Membre B | Membre A | À faire |
-| 3.2 — enrichTransactionData | Membre B | Membre A | À faire |
-| 3.3 — Analyse par partition Window | Membre B | Membre A | À faire |
-| 3.4 — Transactions suspectes (bonus) | Membre B | Membre A | À faire |
+| 3.1 — UDF extractTimeFeatures | Membre B | Membre A | Fait |
+| 3.2 — enrichTransactionData | Membre B | Membre A | Fait |
+| 3.3 — Analyse par partition Window | Membre B | Membre A | Fait |
+| 3.4 — Transactions suspectes (bonus) | Membre B | Membre A | Fait |
 | 4.1 — Rapport détaillé par marchand | Membre C | Membre B | À faire |
 | 4.2 — Analyse de cohortes | Membre C | Membre B | À faire |
 | 4.3 — Segmentation RFM (bonus) | Membre C | Membre B | À faire |
@@ -37,7 +37,7 @@
 | Membre | Heures estimées | Difficultés rencontrées |
 |---|---|---|
 | Membre A (Seynabou Souna DIOP) | ~5-6h (< 2h de développement initial + ~4h de débogage environnement, vérification, correction et mise en place Git/GitHub) | Mise en place de l'environnement local sous Windows plus longue que prévu : version de Java trop récente incompatible avec Spark (passage à Java 17), absence de `winutils.exe`/`hadoop.dll` nécessaires à Hadoop sous Windows, erreurs d'accès mémoire liées au système de modules de Java 17 (flags `--add-opens` à ajouter), et un décalage de type entre le JSON inféré par Spark et la case class `User` (`age` en BIGINT vs Int). |
-| Membre B | TODO | TODO |
+| Membre B (Kemogoha Abdoulaye Coulibaly) | ~8h30 | Difficultés liées à la compatibilité entre Java et Spark : Java 26 provoquait une erreur `UnsupportedOperationException: getSubject is not supported`, résolue avec Java 17. Difficulté également avec les UDF Scala typés dans Spark 3.5.1 (`UNTYPED_SCALA_UDF`), résolue avec l'API Java `UDF1`. Certaines données contenaient aussi des timestamps de 16 caractères au lieu des 14 attendus, provoquant une erreur de parsing. Enfin, la mise en œuvre des fenêtres temporelles et du calcul de la moyenne historique pour la détection des transactions suspectes a nécessité plusieurs tests et ajustements. |
 | Membre C | TODO | TODO |
 
 ## Décisions techniques du groupe
@@ -75,10 +75,13 @@ Partie 6, seuils de la segmentation RFM en Partie 4.3.)*
    inexistant tout en ayant un montant et un timestamp par ailleurs valides : ce
    sont deux dimensions de qualité distinctes qu'il ne faut pas mélanger.
 
-6. TODO (Membre B — Partie 3) : type de jointure retenu pour combiner transactions
-   / users / products / merchants (inner, left, etc.) et justification.
+6. **Stratégie de jointure (Q3.2)** : des `LEFT JOIN` sont utilisés entre les transactions et les tables de référence `users`, `products` et `merchants`. Les transactions constituent la donnée principale à conserver : un problème de correspondance dans une table de référence ne doit pas entraîner la suppression de la transaction. Cette stratégie permet également de conserver les lignes présentant une donnée référentielle manquante.
 
-7. TODO (Membre C — Partie 6) : format(s) de sortie retenu(s) pour les résultats
+7. **Fenêtres temporelles (Q3.3)** : les analyses cumulées utilisent une fenêtre de 7 jours basée sur le temps (`rangeBetween`) plutôt qu'un nombre fixe de lignes. Cela permet de respecter réellement la notion de période glissante de 7 jours, même lorsque le nombre de transactions varie fortement selon les utilisateurs.
+
+8. **Gestion des timestamps irréguliers (Q3.3)** : avant conversion en `timestamp`, seuls les 14 premiers caractères sont utilisés lorsque les données contiennent des valeurs plus longues que le format attendu. Cette précaution évite qu'une valeur mal formée interrompe l'ensemble du traitement Spark.
+
+9. TODO (Membre C — Partie 6) : format(s) de sortie retenu(s) pour les résultats
    finaux (CSV et/ou Parquet) et organisation du répertoire `output/`.
 
 ## Relectures croisées

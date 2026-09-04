@@ -5,7 +5,7 @@
 | Nom | Prénom | E-mail | `git config user.name` |
 |---|---|---|---|
 | DIOP | Seynabou Souna | zeynasouna@gmail.com | Seynabou Souna DIOP |
-| TODO | TODO | TODO@... | TODO |
+| COULIBALY | Kemogoha Abdoulaye | abdoullahcoulibaly2@gmail.com | Kemogoha Abdoulaye Coulibaly |
 | TODO | TODO | TODO@... | TODO |
 
 > Chaque membre doit exécuter sur son propre poste, avant le premier commit :
@@ -21,7 +21,7 @@
 | Rôle | Membre | Périmètre principal | Livrables dont le membre est propriétaire |
 |---|---|---|---|
 | **Membre A** — Data Ingestion & Platform Engineer | Seynabou Souna DIOP | Parties 1, 2 et 7 | Structure SBT, `build.sbt`, case classes, `DataIngestion.scala`, `DataValidation.scala`, `DataQualityReport.scala`, `application.conf`, `README.md` |
-| **Membre B** — Data Transformation Engineer | TODO | Partie 3 | UDF `extractTimeFeatures`, `DataTransformation.scala`, jointures d'enrichissement, fonctions de fenêtrage, détection de comportements |
+| **Membre B** — Data Transformation Engineer | Kemogoha Abdoulaye Coulibaly | Partie 3 | UDF `extractTimeFeatures`, `DataTransformation.scala`, jointures d'enrichissement, fonctions de fenêtrage, détection de comportements |
 | **Membre C** — Analytics & Performance Engineer | TODO | Parties 4, 5 et 6 | `Analytics.scala`, KPI marchands, cohortes, segmentation RFM, optimisations Spark, `MainApp.scala`, écriture des résultats |
 
 Les Parties 8 et 9 (tests, qualité, documentation, soutenance) sont réalisées
@@ -35,5 +35,5 @@ est propriétaire.
 | Membre | Questions traitées |
 |---|---|
 | Membre A | 0.1 / 0.2 / 0.3 (contribution collective), 1.1, 1.2, 1.3, 2.1, 2.2, 2.3, 2.4, 2.5 (bonus), 7.1 |
-| Membre B | TODO |
+| Membre B | 3.1 / 3.2 / 3.3 / 3.4 (bonus) |
 | Membre C | TODO |
