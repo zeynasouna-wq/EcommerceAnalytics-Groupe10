@@ -4,7 +4,7 @@
 
 | Partie / Question | Responsable | Relecteur | Statut |
 |---|---|---|---|
-| 0.1 — Constitution du groupe | Collectif | — | Partiel - Membre A renseignée, B et C à ajouter |
+| 0.1 — Constitution du groupe | Collectif | — | Fait |
 | 0.2 — Suivi Git | Collectif | — | Fait - Dépôt Git local + GitHub créés |
 | 0.3 — Journal de contribution | Collectif | — | En cours (ce fichier) |
 | 1.1 — Structure SBT | Membre A | Membre C | Fait |
@@ -19,15 +19,15 @@
 | 3.2 — enrichTransactionData | Membre B | Membre A | Fait |
 | 3.3 — Analyse par partition Window | Membre B | Membre A | Fait |
 | 3.4 — Transactions suspectes (bonus) | Membre B | Membre A | Fait |
-| 4.1 — Rapport détaillé par marchand | Membre C | Membre B | À faire |
-| 4.2 — Analyse de cohortes | Membre C | Membre B | À faire |
-| 4.3 — Segmentation RFM (bonus) | Membre C | Membre B | À faire |
-| 4.4 — Analyse produits et catégories (bonus) | Membre C | Membre B | À faire |
-| 5.1 — Optimisation du stockage | Membre C | Membres A et B | À faire |
-| 5.2 — Optimisation des jointures | Membre C | Membres A et B | À faire |
-| 5.3 — Mesure du gain (bonus) | Membre C | Membres A et B | À faire |
-| 6.1 — EcommerceAnalyticsApp | Membre C | Les 3 membres | À faire |
-| 6.2 — Exécution modulaire (bonus) | Membre C | Les 3 membres | À faire |
+| 4.1 — Rapport détaillé par marchand | Membre C | Membre B | Fait |
+| 4.2 — Analyse de cohortes | Membre C | Membre B | Fait |
+| 4.3 — Segmentation RFM (bonus) | Membre C | Membre B | Fait |
+| 4.4 — Analyse produits et catégories (bonus) | Membre C | Membre B | Fait |
+| 5.1 — Optimisation du stockage | Membre C | Membres A et B | Fait |
+| 5.2 — Optimisation des jointures | Membre C | Membres A et B | Fait |
+| 5.3 — Mesure du gain (bonus) | Membre C | Membres A et B | Fait |
+| 6.1 — EcommerceAnalyticsApp | Membre C | Les 3 membres | Fait |
+| 6.2 — Exécution modulaire (bonus) | Membre C | Les 3 membres | Fait |
 | 7.1 — application.conf | Membre A | Membre C | Fait |
 
 ## Charge de travail estimée par membre
@@ -84,11 +84,3 @@ Partie 6, seuils de la segmentation RFM en Partie 4.3.)*
 9. TODO (Membre C — Partie 6) : format(s) de sortie retenu(s) pour les résultats
    finaux (CSV et/ou Parquet) et organisation du répertoire `output/`.
 
-## Relectures croisées
-
-*(Chaque module doit être relu par un autre membre que son auteur. Ajouter une
-ligne datée par relecture effectuée.)*
-
-| Date | Module relu | Relecteur | Remarques |
-|---|---|---|---|
-| TODO | TODO | TODO | TODO |
