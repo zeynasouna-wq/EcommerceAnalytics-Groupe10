@@ -737,10 +737,23 @@ object MainApp {
           )
         )
 
+      // Bonus Question 2.5 : intégrité référentielle, calculée sur les
+      // transactions telles que lues (indépendamment de leur propre
+      // validation Q2.2), rattachée à la ligne "transactions" du rapport.
+      val referentialIntegrity =
+        qualityReportBuilder
+          .checkReferentialIntegrity(
+            transactions.toDF(),
+            users.toDF(),
+            products.toDF(),
+            merchants.toDF()
+          )
+
       val report =
         qualityReportBuilder
           .buildReport(
-            datasets
+            datasets,
+            Some(referentialIntegrity)
           )
 
       println()
