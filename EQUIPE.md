@@ -23,8 +23,7 @@
 |---|---|---|---|
 | **Membre A** — Data Ingestion & Platform Engineer | Seynabou Souna DIOP | Parties 1, 2 et 7 | Structure SBT, `build.sbt`, case classes, `DataIngestion.scala`, `DataValidation.scala`, `DataQualityReport.scala`, `application.conf`, `README.md` |
 | **Membre B** — Data Transformation Engineer | Kemogoha Abdoulaye Coulibaly | Partie 3 | UDF `extractTimeFeatures`, `DataTransformation.scala`, jointures d'enrichissement, fonctions de fenêtrage, détection de comportements |
-| **Membre C** — Analytics & Performance Engineer | Mahugnon Dieu-Donné Luc | Parties 4, 5 et 6 | `Analytics.scala`, `SparkOptimization.scala`, KPI marchands, cohortes, segmentation RFM, optimisations Spark, `MainApp.scala`, écriture des résultats |
-| **Membre C** — Analytics & Performance Engineer | Mahugnon Dieu-Donné Luc DOSSOU KOKO | Parties 4, 5 et 6 | `Analytics.scala`, KPI marchands, cohortes, segmentation RFM, optimisations Spark, `MainApp.scala`, écriture des résultats |
+| **Membre C** — Analytics & Performance Engineer | Mahugnon Dieu-Donné Luc DOSSOU KOKO| Parties 4, 5 et 6 | `Analytics.scala`, `SparkOptimization.scala`, KPI marchands, cohortes, segmentation RFM, optimisations Spark, `MainApp.scala`, écriture des résultats |
 
 
 Les Parties 8 et 9 (tests, qualité, documentation, soutenance) sont réalisées
