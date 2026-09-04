@@ -18,3 +18,5 @@ output/
 .metals/
 
 .metals/
+.scalafmt.conf
+project/metals.sbt
