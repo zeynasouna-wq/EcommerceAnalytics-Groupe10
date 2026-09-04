@@ -344,4 +344,111 @@ val withDate =
       )
       .drop("previous_transaction_datetime")
   }
+
+  /**
+ * Détecte les transactions potentiellement suspectes.
+ *
+ * Une transaction est considérée comme suspecte
+ * si au moins 2 des 4 critères suivants sont vérifiés :
+ *
+ * 1. Le montant est supérieur à 300 % de la moyenne
+ *    historique des transactions de l'utilisateur.
+ * 2. La transaction est effectuée pendant la nuit.
+ * 3. La transaction précédente date de moins de 5 minutes.
+ * 4. Le moyen de paiement utilisé est CRYPTO.
+ */
+def detectSuspiciousTransactions(
+    windowAnalysis: DataFrame
+): DataFrame = {
+
+  // Fenêtre historique par utilisateur.
+  //
+  // On exclut la transaction actuelle avec
+  // rowsBetween(unboundedPreceding, -1).
+  val historicalWindow =
+    Window
+      .partitionBy("user_id")
+      .orderBy("transaction_datetime")
+      .rowsBetween(
+        Window.unboundedPreceding,
+        -1
+      )
+
+  // Calcul de la moyenne des transactions précédentes.
+  val withHistoricalAverage =
+    windowAnalysis.withColumn(
+      "historical_average_amount",
+      avg("amount").over(historicalWindow)
+    )
+
+  // Vérification du premier critère :
+  // montant actuel > 300 % de la moyenne historique.
+  val withAmountCriterion =
+    withHistoricalAverage.withColumn(
+      "amount_above_300_percent",
+      when(
+        col("historical_average_amount").isNotNull &&
+        col("amount") > col("historical_average_amount") * 3,
+        1
+      ).otherwise(0)
+    )
+
+  // Vérification du deuxième critère :
+  // transaction effectuée pendant la nuit.
+  val withNightCriterion =
+    withAmountCriterion.withColumn(
+      "night_transaction",
+      when(
+        col("day_period") === "Night",
+        1
+      ).otherwise(0)
+    )
+
+  // Vérification du troisième critère :
+  // moins de 5 minutes entre deux transactions.
+  //
+  // days_since_previous_transaction est exprimé
+  // en jours, donc :
+  //
+  // 5 minutes = 5 / 1440 jours.
+  val withShortGapCriterion =
+    withNightCriterion.withColumn(
+      "previous_transaction_less_than_5min",
+      when(
+        col("days_since_previous_transaction").isNotNull &&
+        col("days_since_previous_transaction") < (5.0 / 1440.0),
+        1
+      ).otherwise(0)
+    )
+
+  // Vérification du quatrième critère :
+  // moyen de paiement CRYPTO.
+  val withCryptoCriterion =
+    withShortGapCriterion.withColumn(
+      "crypto_payment",
+      when(
+        upper(col("payment_method")) === "CRYPTO",
+        1
+      ).otherwise(0)
+    )
+
+  // Addition des quatre critères.
+  val withSuspicionScore =
+    withCryptoCriterion.withColumn(
+      "suspicion_score",
+      col("amount_above_300_percent") +
+        col("night_transaction") +
+        col("previous_transaction_less_than_5min") +
+        col("crypto_payment")
+    )
+
+  // Au moins 2 critères -> transaction suspecte.
+  withSuspicionScore.withColumn(
+    "is_suspicious",
+    when(
+      col("suspicion_score") >= 2,
+      1
+    ).otherwise(0)
+  )
+}
 }

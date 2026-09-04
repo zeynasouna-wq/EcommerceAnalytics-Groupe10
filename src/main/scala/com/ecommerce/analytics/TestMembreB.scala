@@ -1,6 +1,7 @@
 package com.ecommerce.analytics
 
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions._
 
 object TestMembreB {
 
@@ -72,6 +73,44 @@ object TestMembreB {
 
     println("\n===== APERÇU =====")
     enriched.show(10, truncate = false)
+
+    // ============================================================
+    // Q3.4 - TRANSACTIONS SUSPECTES
+    // ============================================================
+
+    val suspiciousTransactions =
+      transformation.detectSuspiciousTransactions(
+        windowAnalysis
+      )
+
+    println("\n===== Q3.4 - TRANSACTIONS SUSPECTES =====")
+
+    val suspiciousCount =
+      suspiciousTransactions
+        .filter(col("is_suspicious") === 1)
+        .count()
+
+    println(
+      s"Nombre de transactions suspectes : $suspiciousCount"
+    )
+
+    println("\n===== TOP 20 MONTANTS SUSPECTS =====")
+
+    suspiciousTransactions
+      .filter(col("is_suspicious") === 1)
+      .select(
+        "transaction_id",
+        "user_id",
+        "amount",
+        "historical_average_amount",
+        "amount_above_300_percent",
+        "night_transaction",
+        "previous_transaction_less_than_5min",
+        "crypto_payment",
+        "suspicion_score"
+      )
+      .orderBy(desc("amount"))
+      .show(20, truncate = false)
 
     spark.stop()
   }
