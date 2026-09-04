@@ -32,7 +32,7 @@ est propriétaire.
 
 ## Liste nominative des questions traitées
 
-*(à compléter au fur et à mesure — sert de base au tableau croisé de CONTRIBUTIONS.md)*
+
 
 | Membre | Questions traitées |
 |---|---|
