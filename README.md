@@ -1,6 +1,6 @@
 # EcommerceAnalytics
 
-Système d'analyse de données e-commerce distribué — Projet final Spark & Scala (Groupe 3).
+Système d'analyse de données e-commerce distribué_ Projet final Spark & Scala (Groupe 10).
 
 Pipeline Spark en Scala qui ingère des données transactionnelles multi-format
 (CSV, JSON, Parquet), les valide, les enrichit, puis produit des indicateurs
@@ -42,7 +42,7 @@ EcommerceAnalytics/
 Tous les paramètres (chemins des fichiers de données, master Spark, seuils de
 validation, options d'optimisation) sont externalisés dans
 `src/main/resources/application.conf`. Aucun chemin ni seuil n'est codé en dur
-dans le code Scala — pour changer d'environnement (données, cluster, seuils
+dans le code Scala - pour changer d'environnement (données, cluster, seuils
 métier), il suffit de modifier ce fichier.
 
 Avant la première exécution, placez les 4 jeux de données dans
