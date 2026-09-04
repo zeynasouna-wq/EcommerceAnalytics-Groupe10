@@ -1,6 +1,6 @@
 # EcommerceAnalytics
 
-Système d'analyse de données e-commerce distribué — Projet final Spark & Scala (Groupe 10).
+Système d'analyse de données e-commerce distribué_Projet final Spark & Scala (Groupe 10).
 
 Pipeline Spark en Scala qui ingère des données transactionnelles multi-format
 (CSV, JSON, Parquet), les valide, les enrichit, puis produit des indicateurs
@@ -13,10 +13,36 @@ métier (KPI marchands, cohortes, segmentation, etc.).
 | **Scala**   | 2.12.18 | Fournie par SBT (`sbt` télécharge le bon compilateur automatiquement) |
 | **Apache Spark** | 3.5.1 | [Télécharger Spark](https://spark.apache.org/downloads.html) et suivre les instructions d'installation pour votre OS. Vérifiez avec `spark-submit --version`. |
 | **SBT** (Simple Build Tool) | 1.9.9 | [Instructions officielles d'installation](https://www.scala-sbt.org/download.html) (SBT installe lui-même la bonne version de Scala au premier lancement). Vérifiez avec `sbt sbtVersion`. |
-| **Java (JDK)** | 8 ou 11 (recommandé par Spark 3.5.x) | `java -version` |
+| **Java (JDK)** | 17 (testé et validé sur ce projet) | `java -version`. Spark 3.5.x supporte Java 8, 11 et 17 ; **Java 17 est la version recommandée ici** (des versions plus récentes, type Java 21+, peuvent provoquer des erreurs au démarrage de Spark, notamment `getSubject is not supported`, liées à la suppression du Security Manager dans les JDK récents). |
 
 Le fichier `project/build.properties` fixe la version de SBT (`sbt.version=1.9.9`) :
 aucune installation manuelle de Scala n'est nécessaire, SBT s'en occupe.
+
+### Prérequis supplémentaires sous Windows
+
+Spark s'appuie en interne sur des bibliothèques Hadoop qui ont besoin de deux
+fichiers pour fonctionner correctement sous Windows (sans quoi la lecture des
+fichiers échoue avec une erreur `UnsatisfiedLinkError` sur `NativeIO`) :
+
+1. Télécharger `winutils.exe` et `hadoop.dll` (version proche de Hadoop 3.3.x,
+   par exemple depuis [cdarlint/winutils](https://github.com/cdarlint/winutils))
+2. Les placer dans un dossier, par exemple `C:\hadoop\bin`
+3. Définir la variable d'environnement `HADOOP_HOME` sur `C:\hadoop`, et
+   l'ajouter au `PATH` :
+   ```powershell
+   $env:HADOOP_HOME = "C:\hadoop"
+   $env:Path = "$env:HADOOP_HOME\bin;$env:Path"
+   ```
+4. Copier également `hadoop.dll` dans `C:\Windows\System32`
+
+Ces variables sont propres à chaque session de terminal : à refaire si vous
+fermez et rouvrez PowerShell, ou à ajouter dans les variables d'environnement
+système pour que ce soit permanent.
+
+Aucune configuration supplémentaire n'est nécessaire pour le système de
+modules de Java 17 (l'erreur `IllegalAccessError` sur des classes internes
+type `sun.nio.ch`) : les flags JVM requis (`--add-opens`) sont déjà déclarés
+dans `build.sbt` (`javaOptions`, avec `fork := true`).
 
 ## Structure du projet
 
@@ -67,7 +93,6 @@ Spark n'est pas embarqué dans ce JAR (dépendance en `Provided` dans
 `build.sbt`) : il est fourni par l'environnement d'exécution
 (SBT en local, ou le cluster via `spark-submit`).
 
-
 ## Workflow depuis le clonage du projet
 
 Après avoir cloné le dépôt, suivre les étapes suivantes depuis la racine du projet :
@@ -108,6 +133,8 @@ spark-submit --class com.ecommerce.analytics.MainApp app.jar comparaison
 > **Remarque :** avant l'exécution, vérifier que les jeux de données sont présents
 > dans `src/main/resources/data/` et que la configuration de
 > `src/main/resources/application.conf` correspond à l'environnement utilisé.
+> Sous Windows, voir aussi la section « Prérequis supplémentaires sous Windows »
+> ci-dessus (winutils.exe / hadoop.dll / HADOOP_HOME).
 
 ## Exécution locale (avec SBT)
 
@@ -121,7 +148,6 @@ sbt run
 Le master Spark utilisé en local est défini dans `application.conf`
 (`app.spark.master = "local[*]"` par défaut, ce qui utilise tous les cœurs
 disponibles de la machine).
-
 
 ## Commandes des différents modes d'exécution
 
@@ -156,7 +182,6 @@ spark-submit \
   target/scala-2.12/EcommerceAnalytics.jar
 ```
 
-
 ### Commande indiquée dans l'épreuve
 
 Pour reproduire l'exécution demandée dans l'épreuve :
@@ -186,16 +211,16 @@ Les résultats sont écrits dans le répertoire défini par
 
 ## Comparatif des performances (optimisations Spark)
 
-*À compléter par le Membre C (Question 5.3, bonus) avec les temps d'exécution
-mesurés avant/après activation du cache et du broadcast.*
+*Mesures réalisées par le Membre C (Question 5.3, bonus) : temps d'exécution
+avant/après activation du cache et du broadcast.*
 
-| Étape | Durée sans optimisation | Durée avec optimisation | Gain |
-|---|---:|---:|---:|
-| Ingestion | 5,448 s | 1,001 s | 81,63 % |
-| Transformation | 1,376 s | 1,877 s | -36,42 % |
-| Analytique | 2,692 s | 1,196 s | 55,59 % |
-| Écriture | 4,214 s | 2,208 s | 47,60 % |
-| **TOTAL** | **13,729 s** | **6,281 s** | **54,25 %** |
+| Étape          | Durée sans optimisation | Durée avec optimisation | Gain        |
+|----------------|------------------------:|------------------------:|------------:|
+| Ingestion      | 5,448 s                 | 1,001 s                 | 81,63 %     |
+| Transformation | 1,376 s                 | 1,877 s                 | -36,42 %    |
+| Analytique     | 2,692 s                 | 1,196 s                 | 55,59 %     |
+| Écriture       | 4,214 s                 | 2,208 s                 | 47,60 %     |
+| **TOTAL**      | **13,729 s**            | **6,281 s**             | **54,25 %** |
 
 Optimisations utilisées dans la seconde exécution :
 
