@@ -6,7 +6,7 @@
 |---|---|---|---|
 | 0.1 — Constitution du groupe | Collectif | — | Fait |
 | 0.2 — Suivi Git | Collectif | — | Fait - Dépôt Git local + GitHub créés |
-| 0.3 — Journal de contribution | Collectif | — | En cours (ce fichier) |
+| 0.3 — Journal de contribution | Collectif | — | Fait |
 | 1.1 — Structure SBT | Membre A | Membre C | Fait |
 | 1.2 — build.sbt | Membre A | Membre C | Fait |
 | 1.3 — README.md | Membre A | Membre C | Fait |
@@ -38,7 +38,7 @@
 |---|---|---|
 | Membre A (Seynabou Souna DIOP) | ~5-6h (< 2h de développement initial + ~4h de débogage environnement, vérification, correction et mise en place Git/GitHub) | Mise en place de l'environnement local sous Windows plus longue que prévu : version de Java trop récente incompatible avec Spark (passage à Java 17), absence de `winutils.exe`/`hadoop.dll` nécessaires à Hadoop sous Windows, erreurs d'accès mémoire liées au système de modules de Java 17 (flags `--add-opens` à ajouter), et un décalage de type entre le JSON inféré par Spark et la case class `User` (`age` en BIGINT vs Int). |
 | Membre B (Kemogoha Abdoulaye Coulibaly) | ~8h30 | Difficultés liées à la compatibilité entre Java et Spark : Java 26 provoquait une erreur `UnsupportedOperationException: getSubject is not supported`, résolue avec Java 17. Difficulté également avec les UDF Scala typés dans Spark 3.5.1 (`UNTYPED_SCALA_UDF`), résolue avec l'API Java `UDF1`. Certaines données contenaient aussi des timestamps de 16 caractères au lieu des 14 attendus, provoquant une erreur de parsing. Enfin, la mise en œuvre des fenêtres temporelles et du calcul de la moyenne historique pour la détection des transactions suspectes a nécessité plusieurs tests et ajustements. |
-| Membre C | TODO | TODO |
+| Membre C (Mahugnon Dieu-Donné Luc DOSSOU KOKO) | ~8h30 | Configuration de l’exécution Spark avec SBT et Java 17 (ajout des options --add-opens dans build.sbt et utilisation de fork := true pour permettre à Spark de démarrer correctement avec Java 17.); Génération du JAR exécutable avec sbt assembly (configuration de sbt-assembly, définition de MainApp comme mainClass et conservation des dépendances Spark en Provided afin de ne pas intégrer Spark dans le JAR.); Mise en place et vérification de l’exécution avec spark-submit (configuration du projet pour permettre l’exécution avec spark-submit --class com.ecommerce.analytics.MainApp app.jar all et vérification des différents modes d’exécution.) ; Affichage des résultats analytiques trop chargé (utilisation de .select(...) pour afficher uniquement les colonnes pertinentes lors de l’aperçu des données enrichies et des résultats.); Comparaison des performances avec et sans optimisation ( exécution des deux scénarios et mesure séparée des temps d’ingestion, de transformation, d’analytique et d’écriture afin de calculer le gain pour chaque étape et le gain global. Reproductibilité de l’exécution pour les autres membres du groupe (génération d’un JAR exécutable du projet et mise à disposition de celui-ci dans le dépôt, permettant aux autres membres d’utiliser directement la commande spark-submit --class com.ecommerce.analytics.MainApp app.jar all sans devoir reconstruire immédiatement le projet. Les commandes SBT de compilation et de génération du JAR sont également documentées pour permettre de régénérer le JAR en cas de modification.)) |
 
 ## Décisions techniques du groupe
 
@@ -81,6 +81,11 @@ Partie 6, seuils de la segmentation RFM en Partie 4.3.)*
 
 8. **Gestion des timestamps irréguliers (Q3.3)** : avant conversion en `timestamp`, seuls les 14 premiers caractères sont utilisés lorsque les données contiennent des valeurs plus longues que le format attendu. Cette précaution évite qu'une valeur mal formée interrompe l'ensemble du traitement Spark.
 
-9. TODO (Membre C — Partie 6) : format(s) de sortie retenu(s) pour les résultats
-   finaux (CSV et/ou Parquet) et organisation du répertoire `output/`.
+9. **Optimisation des jointures (Q5.2)** : utilisation de broadcast() pour les petites tables et configuration du shuffle. Les tables users, products et merchants sont de taille nettement inférieure à transactions. Le choix de broadcast() permet de limiter les échanges liés au shuffle lors des jointures. Le nombre de partitions de shuffle est également configuré via spark.sql.shuffle.partitions afin d'adapter l'exécution aux ressources disponibles.
+
+11. **Mise en cache des données enrichies (Q5.1)** : utilisation de cache() après les jointures. Le DataFrame enrichi est réutilisé par plusieurs traitements analytiques. Le choix de cache() permet de conserver ce résultat en mémoire et d'éviter de recalculer les jointures à chaque utilisation. Le cache est matérialisé avec count() avant les analyses afin de garantir son chargement.
+
+12. **Choix des formats de sortie et organisation du répertoire output/** : les résultats analytiques sont exportés en CSV et Parquet afin de faciliter à la fois leur consultation et leur réutilisation avec Spark. Le répertoire output/ est organisé par traitement, notamment pour distinguer les résultats produits par les analyses et ceux issus de la comparaison des performances.
+
+13. **Segmentation RFM (Q4.3 — bonus)** : utilisation de ntile(5) pour transformer les indicateurs de récence, fréquence et montant en scores de 1 à 5, puis définition de seuils métier sur ces scores pour identifier les segments « Champions », « Clients fidèles », « Nouveaux », « À risque » et « Perdus ». Ce choix permet d'obtenir une segmentation relative aux comportements observés dans le jeu de données et de conserver des règles de classification simples et reproductibles.
 
