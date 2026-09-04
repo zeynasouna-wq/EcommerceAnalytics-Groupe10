@@ -42,11 +42,6 @@
 
 ## Décisions techniques du groupe
 
-*(Minimum 5, avec justification en 2-3 lignes chacune. Les 5 premières ci-dessous
-correspondent à des choix déjà faits dans le code du Membre A — à compléter avec
-les décisions prises par les Membres B et C au fur et à mesure de leur avancement,
-par exemple : stratégie de jointure retenue en Partie 3, format de sortie en
-Partie 6, seuils de la segmentation RFM en Partie 4.3.)*
 
 1. **Versions Spark/Scala** : Spark 3.5.1 avec Scala 2.12.18. Choix de la dernière
    version stable de la branche 3.5 de Spark, associée à la version de Scala 2.12
