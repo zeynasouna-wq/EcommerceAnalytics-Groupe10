@@ -236,7 +236,7 @@ object MainApp {
       s"Shuffle     : $shufflePartitions"
     )
 
-    SparkSession
+    val spark =SparkSession
       .builder()
       .appName(appName)
       .master(master)
@@ -244,8 +244,10 @@ object MainApp {
         "spark.sql.shuffle.partitions",
         shufflePartitions
       )
-      
+      .config("spark.sql.adaptive.enabled", "true")
       .getOrCreate()
+    spark.sparkContext.setLogLevel("ERROR")
+    spark
   }
 
 
@@ -969,236 +971,557 @@ object MainApp {
   }
 
 
-  // ============================================================
-  // 14. ANALYTIQUE
-  // ============================================================
+// ============================================================
+// 14. ANALYTIQUE
+// ============================================================
 
-  /**
-   * Analyses :
-   *
-   * - KPI globaux
-   * - performance des marchands
-   * - analyse de cohortes
-   *
-   * Les résultats sont sauvegardés en CSV et Parquet.
-   */
-  def runAnalytics(
-      enrichedData: DataFrame,
-      transactions: DataFrame,
-      spark: SparkSession,
-      config: Config
-  ): Unit = {
+/**
+ * Exécute les analyses business du projet.
+ *
+ * QUESTION 4 :
+ *
+ * 4.1 - Rapport détaillé par marchand
+ * 4.2 - Analyse de cohortes
+ * 4.3 - Segmentation RFM (BONUS)
+ * 4.4 - Analyse produits et catégories (BONUS)
+ *
+ * Les résultats sont affichés dans la console et sauvegardés
+ * en CSV et Parquet.
+ */
+def runAnalytics(
+    enrichedData: DataFrame,
+    transactions: DataFrame,
+    users: DataFrame,
+    spark: SparkSession,
+    config: Config
+): Unit = {
 
-    executeStep(
-      "ANALYTIQUE"
-    ) {
+  executeStep(
+    "ANALYTIQUE BUSINESS"
+  ) {
 
-      val analytics =
-        new Analytics(
-          spark
-        )
-
-      // ========================================================
-      // KPI GLOBAUX
-      // ========================================================
-
-      println()
-      println(
-        "============================================================"
-      )
-      println(
-        "                    KPI GLOBAUX"
-      )
-      println(
-        "============================================================"
+    val analytics =
+      new Analytics(
+        spark
       )
 
-      val globalKpi =
+    val outputPath =
+      getOutputPath(
+        config
+      )
+
+    // ========================================================
+    // KPI GLOBAUX
+    // ========================================================
+
+    println()
+    println(
+      "============================================================"
+    )
+    println(
+      "                    KPI GLOBAUX"
+    )
+    println(
+      "============================================================"
+    )
+
+  val globalKpi =
+    enrichedData
+      .agg(
+        sum("amount").alias("total_revenue"),
+
+        count("*").alias("transaction_count"),
+
+        countDistinct("user_id").alias("unique_customers"),
+
+        avg("amount").alias("average_transaction_amount")
+      )
+      .select(
+        format_number(
+          col("total_revenue"),
+          2
+        ).alias("total_revenue"),
+
+        col("transaction_count"),
+
+        col("unique_customers"),
+
+        format_number(
+          col("average_transaction_amount"),
+          2
+        ).alias("average_transaction_amount")
+      )
+
+  globalKpi.show(
+    truncate = false
+  )
+
+
+  // ========================================================
+// QUESTION 4.1
+// RAPPORT DETAILLE PAR MARCHAND
+// ========================================================
+
+  println()
+  println(
+    "============================================================"
+  )
+  println(
+    "       QUESTION 4.1 - RAPPORT DETAILLE PAR MARCHAND"
+  )
+  println(
+    "============================================================"
+  )
+
+  val merchantReport =
+    analytics
+      .merchantPerformanceReportWithoutSuspicion(
         enrichedData
-          .agg(
-
-            round(
-              sum("amount"),
-              2
-            ).alias(
-              "total_revenue"
-            ),
-
-            count("*").alias(
-              "transaction_count"
-            ),
-
-            countDistinct(
-              "user_id"
-            ).alias(
-              "unique_customers"
-            ),
-
-            round(
-              avg("amount"),
-              2
-            ).alias(
-              "average_transaction_amount"
-            )
-          )
-          .select(
-            format_number(
-              col("total_revenue"),
-              2
-            ).alias("total_revenue"),
-            col("transaction_count"),
-            col("unique_customers"),
-            col("average_transaction_amount")
-          )
-      globalKpi.show(
-        truncate = false
       )
 
-      // ========================================================
-      // PERFORMANCE DES MARCHANDS
-      // ========================================================
+// ========================================================
+// PARTIE 1 : INFORMATIONS MARCHAND ET KPI FINANCIERS
+// ========================================================
 
-      println()
-      println(
-        "============================================================"
+  println()
+  println(
+    "KPI FINANCIERS ET INFORMATIONS MARCHAND"
+  )
+  println(
+    "------------------------------------------------------------"
+  )
+
+  merchantReport
+    .select(
+      "merchant_id",
+      "merchant_name",
+      "merchant_category",
+      "region",
+      "commission_rate",
+      "total_revenue",
+      "transaction_count",
+      "unique_customers",
+      "average_transaction_amount",
+      "total_commission"
+    )
+    .show(
+      20,
+      truncate = false
+    )
+
+  // ========================================================
+  // PARTIE 2 : VENTES PAR AGE ET CLASSEMENTS
+  // ========================================================
+
+  println()
+  println(
+    "VENTES PAR TRANCHE D'AGE ET CLASSEMENTS"
+  )
+  println(
+    "------------------------------------------------------------"
+  )
+
+  merchantReport
+    .select(
+      "merchant_id",
+      "merchant_name",
+      "sales_Jeune",
+      "sales_Adulte",
+      "sales_Age_Moyen",
+      "sales_Senior",
+      "rank_in_category",
+      "rank_in_region"
+    )
+    .show(
+      20,
+      truncate = false
+    )
+
+    // ========================================================
+    // QUESTION 4.2
+    // ANALYSE DE COHORTES
+    // ========================================================
+
+    println()
+    println(
+      "============================================================"
+    )
+    println(
+      "          QUESTION 4.2 - ANALYSE DE COHORTES"
+    )
+    println(
+      "============================================================"
+    )
+
+    val cohortData =
+      analytics
+        .cohortAnalysis(
+          transactions
+        )
+
+    println()
+    println(
+      "MATRICE DE RETENTION PAR COHORTE ET PAR PERIODE"
+    )
+
+    cohortData.show(
+      30,
+      truncate = false
+    )
+
+
+    // --------------------------------------------------------
+    // Meilleure cohorte à 3 mois
+    // --------------------------------------------------------
+
+    println()
+    println(
+      "MEILLEURE COHORTE A 3 MOIS"
+    )
+
+    val bestCohort =
+      analytics
+        .bestCohortAt3Months(
+          cohortData
+        )
+
+    bestCohort.show(
+      truncate = false
+    )
+
+
+    // ========================================================
+    // QUESTION 4.3
+    // SEGMENTATION RFM - BONUS
+    // ========================================================
+
+    println()
+    println(
+      "============================================================"
+    )
+    println(
+      "          QUESTION 4.3 - SEGMENTATION RFM (BONUS)"
+    )
+    println(
+      "============================================================"
+    )
+
+    val rfmData =
+      analytics
+        .analyzeRFM(
+          transactions,
+          users 
+        )
+
+    println()
+    println(
+      "SEGMENTATION RFM"
+    )
+
+    rfmData.show(
+      20,
+      truncate = false
+    )
+
+
+    println()
+    println(
+      "CROISEMENT RFM / CUSTOMER_SEGMENT"
+    )
+
+    val rfmCrossTabData =
+      analytics
+        .rfmCrossTab(
+          rfmData
+        )
+
+    rfmCrossTabData.show(
+      30,
+      truncate = false
+    )
+
+
+    // ========================================================
+    // QUESTION 4.4
+    // PRODUITS ET CATEGORIES - BONUS
+    // ========================================================
+
+    println()
+    println(
+      "============================================================"
+    )
+    println(
+      "       QUESTION 4.4 - PRODUITS ET CATEGORIES (BONUS)"
+    )
+    println(
+      "============================================================"
+    )
+
+    val (
+      topProducts,
+      categoryRegion,
+      paymentPeriodRevenue
+    ) =
+      analytics
+        .analyzeProductAndCategoryData(
+          enrichedData
+        )
+
+
+    println()
+    println(
+      "TOP 10 DES PRODUITS PAR CHIFFRE D'AFFAIRES"
+    )
+
+    topProducts.show(
+      10,
+      truncate = false
+    )
+
+
+    println()
+    println(
+      "CA ET TRANSACTIONS PAR CATEGORIE ET PAR REGION"
+    )
+
+    categoryRegion.show(
+      30,
+      truncate = false
+    )
+
+
+    println()
+    println(
+      "CA PAR METHODE DE PAIEMENT ET PERIODE DE LA JOURNEE"
+    )
+
+    paymentPeriodRevenue.show(
+      30,
+      truncate = false
+    )
+
+
+    // ========================================================
+    // SAUVEGARDE DES RESULTATS
+    // ========================================================
+
+    println()
+    println(
+      "============================================================"
+    )
+    println(
+      "             SAUVEGARDE DES RESULTATS"
+    )
+    println(
+      "============================================================"
+    )
+
+
+    // --------------------------------------------------------
+    // KPI globaux
+    // --------------------------------------------------------
+
+    globalKpi
+      .write
+      .mode("overwrite")
+      .option(
+        "header",
+        "true"
       )
-      println(
-        "              PERFORMANCE DES MARCHANDS"
-      )
-      println(
-        "============================================================"
+      .csv(
+        outputPath +
+          "/global_kpi"
       )
 
-      val merchantReport =
-        analytics
-          .merchantPerformanceReportWithoutSuspicion(
-            enrichedData
-          )
-      val merchantReportFormatted =
-        merchantReport
-          .withColumn("total_revenue", round(col("total_revenue"), 2))
-          .withColumn("average_transaction_amount", round(col("average_transaction_amount"), 2))
-          .withColumn("total_commission", round(col("total_commission"), 2))
-     // 3. On sélectionne uniquement les colonnes utiles pour l'affichage 
-      merchantReportFormatted
-        .select(
-          "merchant_id",
-          "merchant_name",
-          "merchant_category",
-          "region",
-          "total_revenue",
-          "transaction_count",
-          "unique_customers",
-          "average_transaction_amount",
-          "total_commission",
-          "rank_in_category",
-        )
-        .show(
-          20,
-          truncate = false
-        )
-
-      // ========================================================
-      // ANALYSE DE COHORTES
-      // ========================================================
-
-      println()
-      println(
-        "============================================================"
-      )
-      println(
-        "                  ANALYSE DE COHORTES"
-      )
-      println(
-        "============================================================"
+    globalKpi
+      .write
+      .mode("overwrite")
+      .parquet(
+        outputPath +
+          "/global_kpi_parquet"
       )
 
-      val cohortData =
-        analytics
-          .cohortAnalysis(
-            transactions
-          )
 
-      cohortData.show(
-        20,
-        truncate = false
+    // --------------------------------------------------------
+    // Question 4.1 - Marchands
+    // --------------------------------------------------------
+
+    merchantReport
+      .write
+      .mode("overwrite")
+      .option(
+        "header",
+        "true"
+      )
+      .csv(
+        outputPath +
+          "/merchant_performance"
       )
 
-      // ========================================================
-      // SAUVEGARDE
-      // ========================================================
-
-      val outputPath =
-        getOutputPath(
-          config
-        )
-
-      globalKpi
-        .write
-        .mode("overwrite")
-        .option(
-          "header",
-          "true"
-        )
-        .csv(
-          outputPath +
-            "/global_kpi"
-        )
-
-      globalKpi
-        .write
-        .mode("overwrite")
-        .parquet(
-          outputPath +
-            "/global_kpi_parquet"
-        )
-
-      merchantReport
-        .write
-        .mode("overwrite")
-        .option(
-          "header",
-          "true"
-        )
-        .csv(
-          outputPath +
-            "/merchant_performance"
-        )
-
-      merchantReport
-        .write
-        .mode("overwrite")
-        .parquet(
-          outputPath +
-            "/merchant_performance_parquet"
-        )
-
-      cohortData
-        .write
-        .mode("overwrite")
-        .option(
-          "header",
-          "true"
-        )
-        .csv(
-          outputPath +
-            "/cohort_analysis"
-        )
-
-      cohortData
-        .write
-        .mode("overwrite")
-        .parquet(
-          outputPath +
-            "/cohort_analysis_parquet"
-        )
-
-      println()
-      println(
-        "[OK] Resultats analytiques sauvegardes en CSV et Parquet."
+    merchantReport
+      .write
+      .mode("overwrite")
+      .parquet(
+        outputPath +
+          "/merchant_performance_parquet"
       )
-    }
+
+
+    // --------------------------------------------------------
+    // Question 4.2 - Cohortes
+    // --------------------------------------------------------
+
+    cohortData
+      .write
+      .mode("overwrite")
+      .option(
+        "header",
+        "true"
+      )
+      .csv(
+        outputPath +
+          "/cohort_analysis"
+      )
+
+    cohortData
+      .write
+      .mode("overwrite")
+      .parquet(
+        outputPath +
+          "/cohort_analysis_parquet"
+      )
+
+
+    // --------------------------------------------------------
+    // Question 4.3 - RFM
+    // --------------------------------------------------------
+
+    rfmData
+      .write
+      .mode("overwrite")
+      .option(
+        "header",
+        "true"
+      )
+      .csv(
+        outputPath +
+          "/rfm_analysis"
+      )
+
+    rfmData
+      .write
+      .mode("overwrite")
+      .parquet(
+        outputPath +
+          "/rfm_analysis_parquet"
+      )
+
+
+    rfmCrossTabData
+      .write
+      .mode("overwrite")
+      .option(
+        "header",
+        "true"
+      )
+      .csv(
+        outputPath +
+          "/rfm_cross_tab"
+      )
+
+    rfmCrossTabData
+      .write
+      .mode("overwrite")
+      .parquet(
+        outputPath +
+          "/rfm_cross_tab_parquet"
+      )
+
+
+    // --------------------------------------------------------
+    // Question 4.4 - Produits et catégories
+    // --------------------------------------------------------
+
+    topProducts
+      .write
+      .mode("overwrite")
+      .option(
+        "header",
+        "true"
+      )
+      .csv(
+        outputPath +
+          "/top_products"
+      )
+
+    topProducts
+      .write
+      .mode("overwrite")
+      .parquet(
+        outputPath +
+          "/top_products_parquet"
+      )
+
+
+    categoryRegion
+      .write
+      .mode("overwrite")
+      .option(
+        "header",
+        "true"
+      )
+      .csv(
+        outputPath +
+          "/category_region"
+      )
+
+    categoryRegion
+      .write
+      .mode("overwrite")
+      .parquet(
+        outputPath +
+          "/category_region_parquet"
+      )
+
+
+    paymentPeriodRevenue
+      .write
+      .mode("overwrite")
+      .option(
+        "header",
+        "true"
+      )
+      .csv(
+        outputPath +
+          "/payment_period_revenue"
+      )
+
+    paymentPeriodRevenue
+      .write
+      .mode("overwrite")
+      .parquet(
+        outputPath +
+          "/payment_period_revenue_parquet"
+      )
+
+
+    println()
+    println(
+      "[OK] Resultats analytiques sauvegardes en CSV et Parquet."
+    )
+
+    println()
+    println(
+      "============================================================"
+    )
+    println(
+      "             ANALYTIQUE BUSINESS TERMINEE"
+    )
+    println(
+      "============================================================"
+    )
   }
+}
 
   // ============================================================
   // 15. COMPARAISON DES PERFORMANCES - QUESTION 5.3
@@ -2228,6 +2551,7 @@ object MainApp {
     runAnalytics(
       enrichedData,
       validTransactions,
+      validUsers,
       spark,
       config
     )
@@ -2337,7 +2661,7 @@ object MainApp {
 
         val (
           transactions,
-          _,
+          users,
           _,
           _
         ) =
@@ -2349,6 +2673,7 @@ object MainApp {
         runAnalytics(
           enrichedData,
           transactions.toDF(),
+          users.toDF(),
           spark,
           config
         )
@@ -2553,4 +2878,5 @@ object MainApp {
       )
     }
   }
+
 }
